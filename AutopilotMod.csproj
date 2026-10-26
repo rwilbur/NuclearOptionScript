@@ -1,0 +1,110 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>AutopilotMod</AssemblyName>
+    <Description>In-game autopilot with a fighter-style MFD page for Nuclear Option</Description>
+    <Nullable>disable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+
+    <!-- Your Nuclear Option install folder: edit here, or pass -p:NuclearOptionDir="..." to dotnet build -->
+    <NuclearOptionDir Condition="'$(NuclearOptionDir)' == ''">D:\SteamLibrary\steamapps\common\Nuclear Option</NuclearOptionDir>
+    <ManagedDir>$(NuclearOptionDir)\NuclearOption_Data\Managed</ManagedDir>
+    <!-- Set to false to skip copying the built DLL into BepInEx\plugins -->
+    <DeployToGame>true</DeployToGame>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="src\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- BepInEx core + Harmony, pulled from the BepInEx pack you installed into the game folder -->
+    <Reference Include="BepInEx">
+      <HintPath>$(NuclearOptionDir)\BepInEx\core\BepInEx.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(NuclearOptionDir)\BepInEx\core\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <!-- Unity engine assemblies -->
+    <Reference Include="UnityEngine">
+      <HintPath>$(ManagedDir)\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(ManagedDir)\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>$(ManagedDir)\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>$(ManagedDir)\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>$(ManagedDir)\UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>$(ManagedDir)\UnityEngine.AudioModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestModule">
+      <HintPath>$(ManagedDir)\UnityEngine.UnityWebRequestModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestAudioModule">
+      <HintPath>$(ManagedDir)\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>$(ManagedDir)\UnityEngine.ImageConversionModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>$(ManagedDir)\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <!-- The game's own gameplay assembly - contains Aircraft, ControlInputs, PilotPlayerState, etc. -->
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(ManagedDir)\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>$(ManagedDir)\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(ManagedDir)\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!-- Types that appear in Assembly-CSharp signatures we touch -->
+    <Reference Include="Rewired_Core">
+      <HintPath>$(ManagedDir)\Rewired_Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Interop.SpeechLib">
+      <HintPath>$(ManagedDir)\Interop.SpeechLib.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Mirage">
+      <HintPath>$(ManagedDir)\Mirage.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UniTask">
+      <HintPath>$(ManagedDir)\UniTask.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="DeployToGame" AfterTargets="Build" Condition="'$(DeployToGame)' == 'true' And Exists('$(NuclearOptionDir)\BepInEx\plugins')">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(NuclearOptionDir)\BepInEx\plugins" />
+    <Message Importance="high" Text="AutopilotMod -> $(NuclearOptionDir)\BepInEx\plugins" />
+  </Target>
+
+</Project>
